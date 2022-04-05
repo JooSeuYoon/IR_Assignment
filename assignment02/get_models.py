@@ -1,9 +1,11 @@
 import get_words
 
 class get_models:
-    
-    def make_boolean_model():
+
+    def make_boolean_model(words_list, operators_list):
         boolean_model = {}
+        
+        
 
         return boolean_model
 
