@@ -9,34 +9,34 @@ class invert_index:
             stopwords[stop_word[0:len(stop_word)-1]] = 1
         return stopwords
 
-    def movie_dict(movie_name):
-        try:
-            script_file = open(os.path.dirname(os.path.abspath(__file__)) + '/movies/' + movie_name + '.txt', 'r')
-            script_words = {}
-            
-            for script_line in script_file.readlines():
-                if(script_line != ''):
-                    for word in re.split('[\s+\d`_,.?!&//@$#*:;()"\'\- ]', script_line) :
-                        word = word.lower()
-                        if (word not in invert_index.get_stop_words()) :
-                            if(word not in script_words) :
-                                script_words[word] = 1
-                            else :
-                                script_words[word] += 1
-            script_words = sorted(script_words.items())
-            script_file.close()
-            return script_words
-        except:
-            print("execption error")
-    
-    def get_all_movies():
-        movie_terms = {}
-        try:
-            for mvName in os.listdir('movies/') : 
+    def movie_dict():
+        invert_result = {}
+        
+        for mvName in os.listdir(os.path.dirname(os.path.abspath(__file__)) + '/movies') : 
+                script_terms = {}
                 if(mvName != '.DS_Store') :
                     mvName = mvName[0:len(mvName) - 4]
-                    print('Invert Indexing movie  ' + mvName.replace('-',' '))
-                    movie_terms[mvName] = invert_index.movie_dict(mvName)
-            return movie_terms
-        except:
-            print("exception error")
+                    script_file = open(os.path.dirname(os.path.abspath(__file__)) + '/movies/' + mvName + '.txt', 'r')
+                    print("Movie <" + mvName.replace('-',' ') + "> Invert Indexing ... ")
+
+                    script_file = open(os.path.dirname(os.path.abspath(__file__)) + '/movies/' + mvName + '.txt', 'r')
+                   
+                    for script_line in script_file.readlines():
+                        if(script_line != ''):
+                            for word in re.split('[\s+\d`_,.?!&//@$#*:;()"\'\- ]', script_line) :
+                                word = word.lower()
+                                if (word not in invert_index.get_stop_words()) :
+                                    if(word not in script_terms.keys()) :
+                                        script_terms.update({word : 1})
+                                    else :
+                                        script_terms[word] += 1
+                    for word in script_terms.keys() : 
+                        invert_result[word] = {mvName : 0}
+                        if word in invert_result.keys() :
+                            invert_result[word][mvName] += 1
+                        else : 
+                            invert_result.update({word : {mvName : script_terms[word]}})             
+                    script_file.close()
+        invert_result = sorted(invert_result)
+        return invert_result
+        

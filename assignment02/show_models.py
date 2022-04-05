@@ -1,6 +1,25 @@
 import plotly.graph_objects as go
+import get_models
 
 def make_table(genre, user_movie_list):
+    user_model_case = input("Which model do you want to see? (1. Boolean Model 2. Vector Space Model)\nModel Number : ")
+
+    while (user_model_case == 1 or user_model_case == 2) :
+        print("Input wrong model number. Please try again.\n")
+
+    if user_model_case == 1 :
+        #Boolean Model
+        boolean_model = []
+        for user_movie_name in user_movie_list : 
+            boolean_model.append(get_models.get_models.make_boolean_model(user_movie_name,genre))
+
+
+    elif user_model_case == 2 :
+        #Vector Space Model
+        vector_space_model = []
+        for user_movie_name in user_movie_list : 
+            vector_space_model.append(get_models.get_models.make_vector_space_model(user_movie_name,genre))
+
     
 
 def main() :
