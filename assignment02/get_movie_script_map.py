@@ -4,7 +4,7 @@ import re
 crime_movie = {}
 romance_movie = {}
 
-def movie_list(genre):
+def movie_dict(genre):
     words_dict = {}
 
     for mvName in os.listdir(os.path.dirname(os.path.abspath(__file__)) + '/inspect_movie_scripts/'+genre+'_movies'):
@@ -20,4 +20,3 @@ def movie_list(genre):
             mvFile.close()
     return globals()["{}_movie".format(genre)]
 
-print((movie_list("romance").keys()))
