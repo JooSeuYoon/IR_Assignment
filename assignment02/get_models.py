@@ -16,7 +16,7 @@ class get_models:
         
         return boolean_model
 
-    def make_boolean_model(movie_name, genre):
+    def make_vector_space_model(movie_name, genre):
         movie_dict = get_words.get_words.movie_dict(genre).get(movie_name)
         vector_space_model = {}
 
