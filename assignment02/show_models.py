@@ -23,6 +23,8 @@ def main() :
         else : 
             user_words_list.append(user_query[i].lower())
         i+=1
+    print(get_models.get_models.make_boolean_model(user_words_list, user_operator_list))
+    
 
 if __name__ == "__main__":
     main()

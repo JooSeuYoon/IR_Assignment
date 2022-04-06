@@ -10,33 +10,38 @@ class invert_index:
         return stopwords
 
     def movie_dict():
-        invert_result = {}
+        invert_result = {str : {str : int}}
+        stopwords = invert_index.get_stop_words()
         
         for mvName in os.listdir(os.path.dirname(os.path.abspath(__file__)) + '/movies') : 
-                script_terms = {}
+                #script_terms = {str : int}
                 if(mvName != '.DS_Store') :
                     mvName = mvName[0:len(mvName) - 4]
                     script_file = open(os.path.dirname(os.path.abspath(__file__)) + '/movies/' + mvName + '.txt', 'r')
                     print("Movie <" + mvName.replace('-',' ') + "> Invert Indexing ... ")
-
-                    script_file = open(os.path.dirname(os.path.abspath(__file__)) + '/movies/' + mvName + '.txt', 'r')
                    
                     for script_line in script_file.readlines():
                         if(script_line != ''):
                             for word in re.split('[\s+\d`_,.?!&//@$#*:;()"\'\- ]', script_line) :
                                 word = word.lower()
-                                if (word not in invert_index.get_stop_words()) :
-                                    if(word not in script_terms.keys()) :
-                                        script_terms.update({word : 1})
+                                if (word not in stopwords) :
+                                    if word in invert_result.keys():
+                                        if mvName in invert_result[word].keys() :
+                                            invert_result[word][mvName] += 1
+                                        else :
+                                            invert_result[word].update({mvName : 0})
                                     else :
-                                        script_terms[word] += 1
-                    for word in script_terms.keys() : 
-                        invert_result[word] = {mvName : 0}
-                        if word in invert_result.keys() :
-                            invert_result[word][mvName] += 1
-                        else : 
-                            invert_result.update({word : {mvName : script_terms[word]}})             
+                                        invert_result[word] = {mvName : 1}
+                                    
+                               
                     script_file.close()
-        invert_result = sorted(invert_result)
+        #invert_result = sorted(invert_result)
         return invert_result
+
+    def movie_names() :
+        mvName = []
+        for name in os.listdir(os.path.dirname(os.path.abspath(__file__)) + '/movies') :
+            if name != '.DS_Store' : 
+                mvName.append(name[0:len(name) - 4])
+        return mvName
         
