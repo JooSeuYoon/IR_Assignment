@@ -47,7 +47,7 @@ class get_models:
 
         #result 만들기 operators list로
 
-        boolean_result = copy.copy(boolean_model)
+        boolean_result = copy.deepcopy(boolean_model)
 
         i = 0
         for i in range(len(operators_list)):
