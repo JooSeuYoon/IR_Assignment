@@ -1,6 +1,7 @@
 import numpy as np
 import get_words
 from collections import defaultdict
+import copy
 
 class get_models:
 
@@ -46,7 +47,7 @@ class get_models:
 
         #result 만들기 operators list로
 
-        boolean_result = boolean_model.copy()
+        boolean_result = copy.copy(boolean_model)
 
         i = 0
         for i in range(len(operators_list)):
@@ -66,45 +67,46 @@ class get_models:
         return boolean_model, boolean_result
 
     def make_vector_space_model(query_list):
+        try:
         
-        vector_space_model = {}
-        mvNameList = get_words.invert_index.movie_names()
+            mvNameList = get_words.invert_index.movie_names()
 
-        movie_term_list = get_words.invert_index.movie_dict()
-        tf = {str : {str : int}}
-        df = {str : int}
-        idf = {str : int}
-        weight = {str : {str : int}}
-        
-        cosine_score = {str : int}
-
-        #document frequency & inverse
-        #term freauency & normalize 
-        for term in query_list:
-            df[term] = 0
-            tf[term] = {}
-            if(term in movie_term_list.keys()):
-                for mvName in mvNameList :
-                    if(mvName in movie_term_list[term].keys()) :
-                        df[term] += 1
-                        tf[term] = {mvName : (movie_term_list[term][mvName])}
-                    else :
-                        tf[term] = {mvName : 0}
-            #inverse 구하기
-            idf[term] = np.log10(len(mvNameList) / df[term]) 
-        
-        #TF.IDF Weighting
-        for term in query_list :
-            weight[term] = {}
-            for mvName in mvNameList :
-                weight[term] = {mvName : np.log10(1 + tf[term][mvName]) * idf[term]}
-                cosine_score[mvName] += df[term] * weight[term][mvName]
-        
+            movie_term_list = get_words.invert_index.movie_dict()
+            tf = {str : {str : int}}
+            df = {str : int}
+            idf = {str : float}
+            weight = {str : {str : float}}
             
-        #cosine score
-        for mvName in mvNameList:
-            cosine_score[mvName] =  cosine_score[mvName] / len(mvNameList)
+            cosine_score = {str : {str : float}}
+            cosine_score["score"] = {}
 
-        
-        
-        return vector_space_model
+            #document frequency & inverse
+            #term freauency & normalize 
+            for term in query_list:
+                df[term] = 0
+                tf[term] = {}
+                if(term in movie_term_list.keys()):
+                    for mvName in mvNameList :
+                        if(mvName in movie_term_list[term].keys()) :
+                            df[term] += 1
+                            tf[term][mvName] = movie_term_list[term][mvName]
+                        else :
+                            tf[term][mvName] = 0
+                        cosine_score["score"][mvName] = 0
+                #inverse 구하기
+                idf[term] = np.log10(len(mvNameList) / df[term]) 
+            
+            #TF.IDF Weighting
+            for term in query_list :
+                weight[term] = {}
+                for mvName in mvNameList :
+                    weight[term][mvName] = tf[term][mvName] * idf[term]
+                    weight[term][mvName] = int(weight[term][mvName] * 1000)/1000
+                
+            for term in query_list :
+                for mvName in mvNameList:
+                    cosine_score["score"][mvName] += int(weight[term][mvName] * sum(weight[term].values()) / len(mvNameList) * 1000)/ 1000
+ 
+        except:
+            print("There's no word in document.")
+        return tf, weight, cosine_score
